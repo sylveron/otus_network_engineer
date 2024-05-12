@@ -127,7 +127,7 @@ interface Ethernet3
 interface Loopback1
    ip address 10.1.2.0/32
 ```
-Проверка доступности
+## Проверка доступности
 - SPINE-1
 ~~~
 SPINE-1#ping 10.4.1.1
