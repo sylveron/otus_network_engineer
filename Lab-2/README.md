@@ -36,7 +36,7 @@
 | SPINE-2  | Loopback1 | 10.1.2.0/32  | OSPF        |
 | SPINE-2  |  eth 1    | 10.4.2.0/31  | OSPF        |
 | SPINE-2  |  eth 2    | 10.4.2.2/31  | OSPF        |
-| SPINE-2  |  eth 3    | 10.4.2.2/31  |  OSPF        |
+| SPINE-2  |  eth 3    | 10.4.2.2/31  | OSPF        |
 ### Конфигурация оборудования
 - #### LEAF-1
 ```
