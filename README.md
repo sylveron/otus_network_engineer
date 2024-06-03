@@ -4,3 +4,5 @@
  - [Lab-2 Underlay сети(OSPF)](https://github.com/sylveron/otus_network_engineer/blob/main/Lab-2/README.md)
 
 - [Lab-3 Underlay сети IS-IS](https://github.com/sylveron/otus_network_engineer/blob/main/Lab-3/README.md)
+
+- [Lab-4 Underlay сети BGP](https://github.com/sylveron/otus_network_engineer/blob/main/Lab-4/README.md)
