@@ -6,3 +6,5 @@
 - [Lab-3 Underlay сети IS-IS](https://github.com/sylveron/otus_network_engineer/blob/main/Lab-3/README.md)
 
 - [Lab-4 Underlay сети BGP](https://github.com/sylveron/otus_network_engineer/blob/main/Lab-4/README.md)
+
+- [Lab-5 Overlay. VxLAN EVPN для L2.](https://github.com/sylveron/otus_network_engineer/blob/main/Lab-5/README.md)
