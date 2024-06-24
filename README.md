@@ -9,4 +9,4 @@
 
 - [Lab-5 Overlay. VxLAN EVPN для L2.](https://github.com/sylveron/otus_network_engineer/blob/main/Lab-5/README.md)
 
-- [Lab-5 Overlay. VxLAN EVPN для L3.](https://github.com/sylveron/otus_network_engineer/blob/main/Lab-6/README.md)
+- [Lab-6 Overlay. VxLAN EVPN для L3.](https://github.com/sylveron/otus_network_engineer/blob/main/Lab-6/README.md)
