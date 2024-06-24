@@ -124,14 +124,28 @@ end
 
 - #### [LEAF-1](config/LEAF-1.conf)
 ```
+vlan 10,20
+!
+vrf instance OTUS-L3
+!
+interface Ethernet1
+   description SPINE-1
+   no switchport
+   ip address 10.4.1.3/31
+   bfd interval 100 min-rx 100 multiplier 3
+!
+interface Ethernet2
+   description SPINE-2
+   no switchport
+   ip address 10.4.2.3/31
+   bfd interval 100 min-rx 100 multiplier 3
+!
 interface Loopback2
    ip address 10.1.0.1/32
 !
 interface Loopback100
    description NVE Loopback
    ip address 10.100.0.1/32
-!
-interface Management1
 !
 interface Vlan20
    vrf OTUS-L3
@@ -220,8 +234,6 @@ interface Loopback2
 interface Loopback100
    description NVE Loopback
    ip address 10.100.0.2/32
-!
-interface Management1
 !
 interface Vlan10
    vrf OTUS-L3
@@ -318,8 +330,6 @@ interface Loopback2
 interface Loopback100
    description NVE Loopback
    ip address 10.100.0.3/32
-!
-interface Management1
 !
 interface Vlan10
    vrf OTUS-L3
