@@ -11,7 +11,7 @@
 
 ### Схема сети
 
-![](images/VxLAN.L3VNI.png)
+![](images/VxLAN.L2VNI.png)
 
 ### Конфигурация оборудования
 
@@ -403,53 +403,25 @@ end
 ```
 </details>
 
-<details>
-<summary>Serv-1</summary>
-
-- #### [Serv-1](config/Serv-1.conf)
-```
- ip address 192.168.0.10 255.255.255.0
- ip route 0.0.0.0 0.0.0.0 192.168.0.254
-```
-</details>
-
-<details>
-<summary>Serv-2</summary>
-
-- #### [Serv-2](config/Serv-2.conf)
-```
-ip address 172.16.0.10 255.255.255.0
-ip route 0.0.0.0 0.0.0.0 172.16.0.254
-```
-</details>
-
-<details>
-<summary>VPCS8</summary>
-
-- #### [VPCS8](config/VPCS8.conf)
-```
-IP/MASK     : 192.168.0.20/24
-GATEWAY     : 192.168.0.254
-```
-</details>
-
-<details>
-<summary>VPCS9</summary>
-
-- #### [VPCS9](config/VPCS9.conf)
-```
-IP/MASK     : 172.16.0.20/24
-GATEWAY     : 172.16.0.254
-```
-</details>
-
 ### Проверка связанности устройств в VxLAN EVPN для L3.
 
 <details>
 <summary>leaf-1</summary>
 
 ```
-LEAF-1#sh bgp evpn route-type mac-ip
+LEAF-1# sh ip route vrf OTUS-L3 | b Gateway
+Gateway of last resort is not set
+
+ C        172.16.0.0/24 is directly connected, Vlan20
+
+LEAF-1# show bgp evpn summary
+BGP summary information for VRF default
+Router identifier 10.1.0.1, local AS number 65501
+Neighbor Status Codes: m - Under maintenance
+  Neighbor V AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc
+  10.1.1.0 4 65500           2040      2036    0    0 01:25:49 Estab   4      4
+  10.1.2.0 4 65500           2038      2038    0    0 01:25:49 Estab   4      4
+LEAF-1# sh bgp evpn route-type mac-ip
 BGP routing table information for VRF default
 Router identifier 10.1.0.1, local AS number 65501
 Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
@@ -458,35 +430,40 @@ Origin codes: i - IGP, e - EGP, ? - incomplete
 AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
 
           Network                Next Hop              Metric  LocPref Weight  Path
- * >Ec    RD: 65503:10010 mac-ip 0050.7966.6808
-                                 10.100.0.3            -       100     0       65500 65503 i
- *  ec    RD: 65503:10010 mac-ip 0050.7966.6808
-                                 10.100.0.3            -       100     0       65500 65503 i
- * >Ec    RD: 65503:10010 mac-ip 0050.7966.6808 192.168.0.20
-                                 10.100.0.3            -       100     0       65500 65503 i
- *  ec    RD: 65503:10010 mac-ip 0050.7966.6808 192.168.0.20
-                                 10.100.0.3            -       100     0       65500 65503 i
- * >Ec    RD: 65503:10020 mac-ip 0050.7966.6809
-                                 10.100.0.3            -       100     0       65500 65503 i
- *  ec    RD: 65503:10020 mac-ip 0050.7966.6809
-                                 10.100.0.3            -       100     0       65500 65503 i
- * >Ec    RD: 65503:10020 mac-ip 0050.7966.6809 172.16.0.20
-                                 10.100.0.3            -       100     0       65500 65503 i
- *  ec    RD: 65503:10020 mac-ip 0050.7966.6809 172.16.0.20
-                                 10.100.0.3            -       100     0       65500 65503 i
- * >Ec    RD: 65502:10020 mac-ip 5000.0011.0001
-                                 10.100.0.2            -       100     0       65500 65502 i
- *  ec    RD: 65502:10020 mac-ip 5000.0011.0001
-                                 10.100.0.2            -       100     0       65500 65502 i
- * >Ec    RD: 65502:10020 mac-ip 5000.0011.0001 172.16.0.10
-                                 10.100.0.2            -       100     0       65500 65502 i
- *  ec    RD: 65502:10020 mac-ip 5000.0011.0001 172.16.0.10
-                                 10.100.0.2            -       100     0       65500 65502 i
- * >      RD: 65501:10010 mac-ip aaaa.0010.0000
-                                 -                     -       -       0       i
- * >      RD: 65501:10010 mac-ip aaaa.0010.0000 192.168.0.10
-                                 -                     -       -       0       i
+LEAF-1# sh arp vrf OTUS-L3
+Address         Age (sec)  Hardware Addr   Interface
+LEAF-1# sh interfaces vxlan 1
+Vxlan1 is up, line protocol is up (connected)
+  Hardware is Vxlan
+  Source interface is Loopback100 and is active with 10.100.0.1
+  Listening on UDP port 4789
+  Replication/Flood Mode is headend with Flood List Source: EVPN
+  Remote MAC learning via EVPN
+  VNI mapping to VLANs
+  Static VLAN to VNI mapping is
+    [10, 10010]       [20, 10020]
+  Dynamic VLAN to VNI mapping for 'evpn' is
+    [1006, 444]
+  Note: All Dynamic VLANs used by VCS are internal VLANs.
+        Use 'show vxlan vni' for details.
+  Static VRF to VNI mapping is
+   [OTUS-L3, 444]
+  Headend replication flood vtep list is:
+    10 10.100.0.2      10.100.0.3
+    20 10.100.0.2      10.100.0.3
+  Shared Router MAC is 0000.0000.0000
+LEAF-1# show vxlan vni
+VNI to VLAN Mapping for Vxlan1
+VNI         VLAN       Source       Interface        802.1Q Tag
+----------- ---------- ------------ ---------------- ----------
+10010       10         static       Ethernet10       untagged
+                                    Vxlan1           10
+10020       20         static       Vxlan1           20
 
+VNI to dynamic VLAN Mapping for Vxlan1
+VNI       VLAN       VRF           Source
+--------- ---------- ------------- ------------
+444       1006       OTUS-L3       evpn
 ```
 </details>
 
@@ -494,7 +471,20 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
 <summary>leaf-2</summary>
 
 ```
-LEAF-2#sh bgp evpn route-type mac-ip
+LEAF-2# sh ip route vrf OTUS-L3 | b Gateway
+Gateway of last resort is not set
+
+ C        172.16.0.0/24 is directly connected, Vlan20
+ C        192.168.0.0/24 is directly connected, Vlan10
+
+LEAF-2# show bgp evpn summary
+BGP summary information for VRF default
+Router identifier 10.1.0.2, local AS number 65502
+Neighbor Status Codes: m - Under maintenance
+  Neighbor V AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc
+  10.1.1.0 4 65500           2030      2036    0    0 01:25:51 Estab   4      4
+  10.1.2.0 4 65500           2030      2029    0    0 01:25:50 Estab   4      4
+LEAF-2# sh bgp evpn route-type mac-ip
 BGP routing table information for VRF default
 Router identifier 10.1.0.2, local AS number 65502
 Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
@@ -503,34 +493,42 @@ Origin codes: i - IGP, e - EGP, ? - incomplete
 AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
 
           Network                Next Hop              Metric  LocPref Weight  Path
- * >Ec    RD: 65503:10010 mac-ip 0050.7966.6808
-                                 10.100.0.3            -       100     0       65500 65503 i
- *  ec    RD: 65503:10010 mac-ip 0050.7966.6808
-                                 10.100.0.3            -       100     0       65500 65503 i
- * >Ec    RD: 65503:10010 mac-ip 0050.7966.6808 192.168.0.20
-                                 10.100.0.3            -       100     0       65500 65503 i
- *  ec    RD: 65503:10010 mac-ip 0050.7966.6808 192.168.0.20
-                                 10.100.0.3            -       100     0       65500 65503 i
- * >Ec    RD: 65503:10020 mac-ip 0050.7966.6809
-                                 10.100.0.3            -       100     0       65500 65503 i
- *  ec    RD: 65503:10020 mac-ip 0050.7966.6809
-                                 10.100.0.3            -       100     0       65500 65503 i
- * >Ec    RD: 65503:10020 mac-ip 0050.7966.6809 172.16.0.20
-                                 10.100.0.3            -       100     0       65500 65503 i
- *  ec    RD: 65503:10020 mac-ip 0050.7966.6809 172.16.0.20
-                                 10.100.0.3            -       100     0       65500 65503 i
- * >      RD: 65502:10020 mac-ip 5000.0011.0001
-                                 -                     -       -       0       i
- * >      RD: 65502:10020 mac-ip 5000.0011.0001 172.16.0.10
-                                 -                     -       -       0       i
- * >Ec    RD: 65501:10010 mac-ip aaaa.0010.0000
-                                 10.100.0.1            -       100     0       65500 65501 i
- *  ec    RD: 65501:10010 mac-ip aaaa.0010.0000
-                                 10.100.0.1            -       100     0       65500 65501 i
- * >Ec    RD: 65501:10010 mac-ip aaaa.0010.0000 192.168.0.10
-                                 10.100.0.1            -       100     0       65500 65501 i
- *  ec    RD: 65501:10010 mac-ip aaaa.0010.0000 192.168.0.10
-                                 10.100.0.1            -       100     0       65500 65501 i
+LEAF-2# sh arp vrf OTUS-L3
+Address         Age (sec)  Hardware Addr   Interface
+192.168.0.10      1:11:56  0050.7966.6806  Vlan10, not learned
+172.16.0.10       1:11:30  0050.7966.6807  Vlan20, not learned
+LEAF-2# sh interfaces vxlan 1
+Vxlan1 is up, line protocol is up (connected)
+  Hardware is Vxlan
+  Source interface is Loopback100 and is active with 10.100.0.2
+  Listening on UDP port 4789
+  Replication/Flood Mode is headend with Flood List Source: EVPN
+  Remote MAC learning via EVPN
+  VNI mapping to VLANs
+  Static VLAN to VNI mapping is
+    [10, 10010]       [20, 10020]
+  Dynamic VLAN to VNI mapping for 'evpn' is
+    [4094, 444]
+  Note: All Dynamic VLANs used by VCS are internal VLANs.
+        Use 'show vxlan vni' for details.
+  Static VRF to VNI mapping is
+   [OTUS-L3, 444]
+  Headend replication flood vtep list is:
+    10 10.100.0.1      10.100.0.3
+    20 10.100.0.1      10.100.0.3
+  Shared Router MAC is 0000.0000.0000
+LEAF-2# show vxlan vni
+VNI to VLAN Mapping for Vxlan1
+VNI         VLAN       Source       Interface        802.1Q Tag
+----------- ---------- ------------ ---------------- ----------
+10010       10         static       Vxlan1           10
+10020       20         static       Ethernet11       untagged
+                                    Vxlan1           20
+
+VNI to dynamic VLAN Mapping for Vxlan1
+VNI       VLAN       VRF           Source
+--------- ---------- ------------- ------------
+444       4094       OTUS-L3       evpn
 ```
 </details>
 
@@ -538,7 +536,20 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
 <summary>leaf-3</summary>
 
 ```
-LEAF-3#show bgp evpn  route-type mac-ip
+LEAF-3# sh ip route vrf OTUS-L3 | b Gateway
+Gateway of last resort is not set
+
+ C        172.16.0.0/24 is directly connected, Vlan20
+ C        192.168.0.0/24 is directly connected, Vlan10
+
+LEAF-3# show bgp evpn summary
+BGP summary information for VRF default
+Router identifier 10.1.0.3, local AS number 65503
+Neighbor Status Codes: m - Under maintenance
+  Neighbor V AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc
+  10.1.1.0 4 65500           2034      2057    0    0 01:25:49 Estab   4      4
+  10.1.2.0 4 65500           2033      2030    0    0 01:25:49 Estab   4      4
+LEAF-3# sh bgp evpn route-type mac-ip
 BGP routing table information for VRF default
 Router identifier 10.1.0.3, local AS number 65503
 Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
@@ -547,93 +558,81 @@ Origin codes: i - IGP, e - EGP, ? - incomplete
 AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
 
           Network                Next Hop              Metric  LocPref Weight  Path
- * >      RD: 65503:10010 mac-ip 0050.7966.6808
-                                 -                     -       -       0       i
- * >      RD: 65503:10010 mac-ip 0050.7966.6808 192.168.0.20
-                                 -                     -       -       0       i
- * >      RD: 65503:10020 mac-ip 0050.7966.6809
-                                 -                     -       -       0       i
- * >      RD: 65503:10020 mac-ip 0050.7966.6809 172.16.0.20
-                                 -                     -       -       0       i
- * >Ec    RD: 65502:10020 mac-ip 5000.0011.0001
-                                 10.100.0.2            -       100     0       65500 65502 i
- *  ec    RD: 65502:10020 mac-ip 5000.0011.0001
-                                 10.100.0.2            -       100     0       65500 65502 i
- * >Ec    RD: 65502:10020 mac-ip 5000.0011.0001 172.16.0.10
-                                 10.100.0.2            -       100     0       65500 65502 i
- *  ec    RD: 65502:10020 mac-ip 5000.0011.0001 172.16.0.10
-                                 10.100.0.2            -       100     0       65500 65502 i
- * >Ec    RD: 65501:10010 mac-ip aaaa.0010.0000
-                                 10.100.0.1            -       100     0       65500 65501 i
- *  ec    RD: 65501:10010 mac-ip aaaa.0010.0000
-                                 10.100.0.1            -       100     0       65500 65501 i
- * >Ec    RD: 65501:10010 mac-ip aaaa.0010.0000 192.168.0.10
-                                 10.100.0.1            -       100     0       65500 65501 i
- *  ec    RD: 65501:10010 mac-ip aaaa.0010.0000 192.168.0.10
-                                 10.100.0.1            -       100     0       65500 65501 i
 
+LEAF-3# sh arp vrf OTUS-L3
+Address         Age (sec)  Hardware Addr   Interface
+192.168.0.10      1:11:56  0050.7966.6806  Vlan10, not learned
+192.168.0.20      1:12:25  0050.7966.6808  Vlan10, not learned
+172.16.0.20       1:11:42  0050.7966.6809  Vlan20, not learned
+
+LEAF-3# sh interfaces vxlan 1
+Vxlan1 is up, line protocol is up (connected)
+  Hardware is Vxlan
+  Source interface is Loopback100 and is active with 10.100.0.3
+  Listening on UDP port 4789
+  Replication/Flood Mode is headend with Flood List Source: EVPN
+  Remote MAC learning via EVPN
+  VNI mapping to VLANs
+  Static VLAN to VNI mapping is
+    [10, 10010]       [20, 10020]
+  Dynamic VLAN to VNI mapping for 'evpn' is
+    [1006, 444]
+  Note: All Dynamic VLANs used by VCS are internal VLANs.
+        Use 'show vxlan vni' for details.
+  Static VRF to VNI mapping is
+   [OTUS-L3, 444]
+  Headend replication flood vtep list is:
+    10 10.100.0.1      10.100.0.2
+    20 10.100.0.1      10.100.0.2
+  Shared Router MAC is 0000.0000.0000
+LEAF-3# show vxlan vni
+VNI to VLAN Mapping for Vxlan1
+VNI         VLAN       Source       Interface        802.1Q Tag
+----------- ---------- ------------ ---------------- ----------
+10010       10         static       Ethernet10       untagged
+                                    Ethernet5        10
+                                    Vxlan1           10
+10020       20         static       Ethernet11       untagged
+                                    Ethernet5        20
+                                    Vxlan1           20
+
+VNI to dynamic VLAN Mapping for Vxlan1
+VNI       VLAN       VRF           Source
+--------- ---------- ------------- ------------
+444       1006       OTUS-L3       evpn
 ```
 </details>
 
 ### Проверка связанности по ping
 <details>
-<summary>Serv-1</summary>
+<summary>Client-1</summary>
 
-```
-Serv-1#ping 192.168.0.10
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 192.168.0.10, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms
-Serv-1#ping 192.168.0.20
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 192.168.0.20, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 18/18/21 ms
-Serv-1#ping 172.16.0.10
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 172.16.0.10, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 21/23/24 ms
-Serv-1#ping 172.16.0.20
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 172.16.0.20, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 28/29/31 ms
-Serv-1#sho ip int br
-Interface              IP-Address      OK? Method Status                Protocol
-GigabitEthernet0/0     192.168.0.10    YES NVRAM  up                    up
-```
+VPCS> ping 172.16.0.10 -c 2
+84 bytes from 172.16.0.10 icmp_seq=1 ttl=63 time=96.835 ms
+84 bytes from 172.16.0.10 icmp_seq=2 ttl=63 time=18.714 ms
+
+VPCS> ping 172.16.0.20 -c 2
+84 bytes from 172.16.0.20 icmp_seq=1 ttl=63 time=32.540 ms
+84 bytes from 172.16.0.20 icmp_seq=2 ttl=63 time=30.365 ms
+
+VPCS> arp
+00:00:00:00:00:02  192.168.0.254 expires in 101 seconds
 
 </details>
 
 <details>
-<summary>Serv-2</summary>
+<summary>Client-2</summary>
+VPCS> ping 192.168.0.10 -c 2
 
-```
-Serv-2#ping 192.168.0.10
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 192.168.0.10, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 20/21/23 ms
-Serv-2#ping 192.168.0.20
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 192.168.0.20, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 18/21/30 ms
-Serv-2#ping 172.16.0.10
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 172.16.0.10, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms
-Serv-2#ping 172.16.0.20
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 172.16.0.20, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 20/21/24 ms
-Serv-2#sho ip int br
-Interface              IP-Address      OK? Method Status                Protocol
-GigabitEthernet0/0     unassigned      YES unset  administratively down down
-GigabitEthernet0/1     172.16.0.10     YES manual up                    up
-```
+84 bytes from 192.168.0.10 icmp_seq=1 ttl=63 time=19.307 ms
+84 bytes from 192.168.0.10 icmp_seq=2 ttl=63 time=18.216 ms
+
+VPCS> ping 192.168.0.20 -c 2
+
+84 bytes from 192.168.0.20 icmp_seq=1 ttl=62 time=24.571 ms
+84 bytes from 192.168.0.20 icmp_seq=2 ttl=62 time=17.436 ms
+
+VPCS> arp
+
+00:00:00:00:00:02  172.16.0.254 expires in 41 seconds
 </details>
