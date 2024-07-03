@@ -575,6 +575,40 @@ AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Li
 ```
 </details>
 
+### Таблица маршрутизации в VRF
+```
+LEAF-1#sho ip route  vrf OTUS-L3
+VRF: OTUS-L3
+Gateway of last resort is not set
+
+ B E      172.16.0.10/32 [200/0] via VTEP 10.100.0.2 VNI 444 router-mac 50:00:00:03:37:66 local-interface Vxlan1
+ B E      172.16.0.20/32 [200/0] via VTEP 10.100.0.3 VNI 444 router-mac 50:00:00:15:f4:e8 local-interface Vxlan1
+ C        172.16.0.0/24 is directly connected, Vlan20
+ B E      192.168.0.20/32 [200/0] via VTEP 10.100.0.3 VNI 444 router-mac 50:00:00:15:f4:e8 local-interface Vxlan1
+ C        192.168.0.0/24 is directly connected, Vlan10
+```
+```
+LEAF-2#sho ip route  vrf OTUS-L3
+VRF: OTUS-L3
+Gateway of last resort is not set
+
+ B E      172.16.0.20/32 [200/0] via VTEP 10.100.0.3 VNI 444 router-mac 50:00:00:15:f4:e8 local-interface Vxlan1
+ C        172.16.0.0/24 is directly connected, Vlan20
+ B E      192.168.0.10/32 [200/0] via VTEP 10.100.0.1 VNI 444 router-mac 50:00:00:d5:5d:c0 local-interface Vxlan1
+ B E      192.168.0.20/32 [200/0] via VTEP 10.100.0.3 VNI 444 router-mac 50:00:00:15:f4:e8 local-interface Vxlan1
+ C        192.168.0.0/24 is directly connected, Vlan10
+```
+```
+LEAF-3#sho ip route  vrf OTUS-L3
+VRF: OTUS-L3
+Gateway of last resort is not set
+
+ B E      172.16.0.10/32 [200/0] via VTEP 10.100.0.2 VNI 444 router-mac 50:00:00:03:37:66 local-interface Vxlan1
+ C        172.16.0.0/24 is directly connected, Vlan20
+ B E      192.168.0.10/32 [200/0] via VTEP 10.100.0.1 VNI 444 router-mac 50:00:00:d5:5d:c0 local-interface Vxlan1
+ C        192.168.0.0/24 is directly connected, Vlan10
+```
+
 ### Проверка связанности по ping
 <details>
 <summary>Serv-1</summary>
