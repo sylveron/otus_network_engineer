@@ -147,6 +147,10 @@ interface Loopback100
    description NVE Loopback
    ip address 10.100.0.1/32
 !
+interface Vlan10
+   vrf OTUS-L3
+   ip address virtual 192.168.0.254/24
+!
 interface Vlan20
    vrf OTUS-L3
    ip address virtual 172.16.0.254/24
